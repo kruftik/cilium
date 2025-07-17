@@ -553,8 +553,17 @@ ct_extract_ports6(struct __ctx_buff *ctx, int off, struct ipv6_ct_tuple *tuple)
 			return DROP_CT_INVALID_HDR;
 
 		break;
+	case IPPROTO_IPIP:
+		if (l4_load_ports(ctx, off+sizeof(struct iphdr), &tuple->dport) < 0)
+			return DROP_CT_INVALID_HDR;
+        break;
+	case IPPROTO_IPV6:
+		if (l4_load_ports(ctx, off+sizeof(struct iphdr), &tuple->dport) < 0)
+			return DROP_CT_INVALID_HDR;
+        break;
 	default:
 		/* Can't handle extension headers yet */
+		printk("drop ct unknown proto\n");
 		return DROP_CT_UNKNOWN_PROTO;
 	}
 
